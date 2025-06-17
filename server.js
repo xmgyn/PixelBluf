@@ -62,7 +62,7 @@ async function loadDIR() {
     // Only Accept MP4 Files As Video.js Works Best With MP4 H.264 Videos
     mp4Files = files.filter(file => { const extName = path.extname(file); const baseName = path.basename(file, extName); return extName === '.mp4' && /^[0-9]{4}$/.test(baseName); });
   
-    // Add FFMpeg H.264 Check If Needed,  Else Convert Them Manually
+    // Add FFMpeg H.264 Check If Needed, Else Convert Them Manually
   })
 };
 
@@ -74,7 +74,7 @@ async function getAllValues() {
     const key = i.toString().padStart(4, '0');
     try {
       const value = await client.json.get(key, '.');
-      if (value !== null) { CACHEVALUES[key + '.mp4'] = value; }
+      if (value !== null) CACHEVALUES[key + '.mp4'] = value;
     } catch (err) {
       console.error(`Error getting value for key ${key}:`, err);
     }
@@ -177,7 +177,7 @@ app.post('/info', async (req, res) => {
       Category: category
     };
     await client.json.set(id, '.', data, { NX: false });
-    if (id > END) console.log("Increment END");
+    if (id > END) await client.set('ENDVALUE', parseInt(id));
     const getall = await getAllValues();
     res.status(200).json({ message: 'Data set successfully', data });
   } catch (err) {

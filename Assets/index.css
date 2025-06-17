@@ -47,7 +47,7 @@ img {
 body {
   font-family: var(--body-font);
   color: var(--body-color);
-  background-color: #03032d;
+  background-color: #000016;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -463,6 +463,7 @@ div#back {
 .four {
   height: 21vh;
   width: 16vw;
+  border: 1.4px solid #585858;
 }
 
 .video:hover {
@@ -515,6 +516,7 @@ div#back {
   position: absolute;
   margin: 0 auto;
   object-fit: cover;
+  mix-blend-mode: multiply;
   z-index: 0;
 }
 
