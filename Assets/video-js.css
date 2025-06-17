@@ -7,23 +7,35 @@
 /* Big play Button */
 .vjs-theme-forest:hover .vjs-big-play-button,
 .vjs-theme-forest.vjs-big-play-button:focus {
-  background-color: transparent;
-  background: svg-load('icons/play-btn.svg', fill=#6fb04e);
+  /* background: svg-load('icons/play-btn.svg', fill=#6fb04e); */
 }
 
 .vjs-theme-forest .vjs-big-play-button {
-  width: 88px;
-  height: 88px;
-  background: none;
-  background-repeat: no-repeat;
-  background-position: center;
-  background: svg-load('icons/play-btn.svg', fill=#fff);
-  border: none;
-  top: 50%;
-  left: 50%;
-  margin-top: -44px;
-  margin-left: -44px;
-  color: purple;
+  width: 110px;
+    height: 110px;
+    background: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-image: url(icons/play-btn.svg);
+    background-color: rgb(31,31,31);
+    background-repeat: no-repeat;
+    border: 8px solid rgb(31,31,31);
+    top: 50%;
+    left: 50%;
+    margin-top: -50px;
+    margin-left: -50px;
+}
+
+.vjs-paused {
+  .vjs-big-play-button {
+    display: block;
+  }
+}
+
+.vjs-playing {
+  .vjs-big-play-button {
+    display: none;
+  }
 }
 
 .vjs-theme-forest .vjs-big-play-button .vjs-icon-placeholder {
@@ -31,7 +43,7 @@
 }
 
 /* Control Bar */
-.vjs-theme-forest .vjs-button > .vjs-icon-placeholder::before {
+.vjs-theme-forest .vjs-button>.vjs-icon-placeholder::before {
   line-height: 1.55;
 }
 
@@ -58,7 +70,7 @@
   width: 1.5em;
   margin-top: 0.2em;
   border-radius: 1em;
-  color: var(--vjs-theme-forest--primary);
+  color: #0008ff;
 }
 
 .vjs-theme-forest .vjs-play-control:hover .vjs-icon-placeholder:before {

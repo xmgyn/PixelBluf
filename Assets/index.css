@@ -5,6 +5,26 @@
   box-sizing: border-box;
 }
 
+/* Optimize for 1650px resolution */
+.container, .stream-area, .stream {
+  max-width: 1650px;
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (max-width: 1500px) {
+  .container, .stream-area, .stream {
+    max-width: 1240px;
+  }
+}
+
+/* Small devices (phones, 600px and down) */
+@media (max-width: 1000px) {
+  .container, .stream-area, .stream {
+    max-width: 100%;
+  }
+}
+
+
 html {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
@@ -27,12 +47,7 @@ img {
 body {
   font-family: var(--body-font);
   color: var(--body-color);
-  background-image: url("background.jpg");
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-blend-mode: color-dodge;
-  background-color: rgba(18, 21, 39, 0.86);
+  background-color: #03032d;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,8 +71,8 @@ body:before {
 
 .container {
   background-color: rgb(0 0 0 / 60%);
-  backdrop-filter: blur(8px);
-  max-width: 1240px;
+  /*backdrop-filter: blur(8px); Creates Sluggish Experience */
+  /*max-width: 1240px;*/
   max-height: 900px;
   height: 88vh;
   display: flex;
@@ -103,6 +118,7 @@ body:before {
 .sidebar-link.is-active {
   color: #fff;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .sidebar-link:hover:nth-child(2n+1) svg,
@@ -430,8 +446,6 @@ div#back {
 
 .video {
   position: relative;
-  height: 30vh;
-  width: 22vw;
   background-blend-mode: overlay;
   background-repeat: no-repeat;
   background-size: cover;
@@ -441,13 +455,19 @@ div#back {
   overflow: hidden;
 }
 
-.video:hover {
-  background-color: #7274a5;
-  cursor: pointer;
+.three {
+  height: 30vh;
+  width: 22vw;
+}
 
-  .video-title {
-    display: block;
-  }
+.four {
+  height: 21vh;
+  width: 16vw;
+}
+
+.video:hover {
+  cursor: pointer;
+  transform: scale(1.05);
 }
 
 .video-wrapper {
@@ -476,13 +496,26 @@ div#back {
 }
 
 .video-title {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   color: white;
-  font-size: xxx-large;
-  position: absolute;
-  bottom: 0px;
   padding: 0px 10px 3px;
   text-align: center;
+  width: 100%;
+  height: 90%;
+  overflow: hidden;
+  position: absolute;
+  z-index: 1;
+}
+
+.video-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  margin: 0 auto;
+  object-fit: cover;
+  z-index: 0;
 }
 
 .video-by {
@@ -490,6 +523,7 @@ div#back {
   padding: 12px 15px 0px;
   display: inline-flex;
   position: relative;
+  z-index: 1;
 }
 
 .video-by:before {
@@ -501,6 +535,7 @@ div#back {
   position: absolute;
   top: 19px;
   right: 0px;
+  z-index: 1;
 }
 
 .video-time {
@@ -513,26 +548,7 @@ div#back {
   top: 10px;
   z-index: 1;
   right: 8px;
-}
-
-.video:hover video {
-  transform: scale(1.6);
-  transform-origin: center;
-}
-
-.video:hover .video-time {
-  display: none;
-}
-
-.video:hover .video-author {
-  bottom: -65px;
-  transform: scale(0.6);
-  right: -3px;
-  z-index: 10;
-}
-
-.video:hover .video-by {
-  opacity: 0;
+  z-index: 1;
 }
 
 .video-author {
@@ -557,8 +573,7 @@ video {
 
 .stream-area {
   background-color: rgb(0 0 0 / 60%);
-  backdrop-filter: blur(8px);
-  max-width: 1240px;
+  /*max-width: 1240px;*/
   max-height: 900px;
   height: 88vh;
   display: none;
@@ -574,7 +589,7 @@ video {
 }
 
 div.stream {
-  max-width: 1240px;
+  /*max-width: 1240px;*/
   max-height: 900px;
   height: 88vh;
   width: 100%;
@@ -675,41 +690,68 @@ div.stream {
 }
 
 div.form {
+  width: 100%;
+  height: 100%;
   position: absolute;
-  justify-self: center;
-  align-self: center;
-  background-color: #0d0c0e;
-  border: solid 2px #0008ff;
-  height: 74vh;
-  width: 25vw;
-  border-radius: 10px;
   justify-content: center;
-  display: flex;
-  padding: 5vh;
+  background-color: rgb(0, 0 ,0 ,0.6);
 
-  .form-heading {
-    font-size: 1.5rem;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .form-group {
-    margin-bottom: 1rem;
-    position: relative;
-  }
-
-  .form-input {
-    width: 100%;
-    padding: 0.5rem;
-  }
-
-  .form-icon {
+  .close {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 0.5rem;
+        right: 35px;
+        top: 35px;
+        height: 25px;
+        width: 25px;
+        cursor: pointer;
   }
+
+  .form-container {
+    position: absolute;
+    justify-self: center;
+    align-self: center;
+    background-color: #0d0c0e;
+    border: solid 2px #0008ff;
+    height: 74vh;
+    width: 25vw;
+    border-radius: 10px;
+    justify-content: center;
+    display: flex;
+    padding: 5vh;
+    overflow: scroll;
+
+    .form-heading {
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.5rem;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background-color: #0008ff;
+      color: white;
+      padding: 0.5rem;
+      border-radius: 1.25rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .submit-btn:hover {
+      background-color: #0cea10;
+    }
+  }
+
+
 
   #artistDropdown {
     position: absolute;
@@ -731,29 +773,43 @@ div.form {
     }
   }
 
-  .submit-btn {
-    width: 100%;
-    background-color: #0008ff;
-    color: white;
-    padding: 0.5rem;
-    border-radius: 1.25rem;
-    cursor: pointer;
-    border: none;
-  }
 
-  .submit-btn:hover {
-    background-color: #0cea10;
-  }
 }
 
 
 #artist-container {
-  position: absolute;
-  background: white;
-  width: 25vw;
+  background: black;
+  width: 19vw;
+  margin-bottom: 1rem;
   overflow: scroll;
   display: flex;
-  transform: translate(25vw, 0px);
+}
+
+.vjs-poster {
+  img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+}
+
+.loader {
+  border: 4px solid #ffffff;
+  border-radius: 50%;
+  border-top: 4px solid rgb(0, 8, 255);
+  width: 35px;
+  height: 35px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .tag {

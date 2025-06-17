@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -6,26 +8,39 @@ const redis = require('redis');
 const app = express();
 const port = 3000;
 
-const MEDIAPATH = "D:\\Work\\Play Projects\\PixelBluf\\.medias";
-const ENDVALUE = 2;         // Upper Value To Limit Folder Search
-
+var END;
 var CACHEVALUES = {};
 var mp4Files = [];
 
 const client = redis.createClient({
-  // host: 'YOUR_REDIS_SERVER_HOST',
-  // port: YOUR_REDIS_SERVER_PORT,
-  // password: 'YOUR_REDIS_SERVER_PASSWORD' 
+    username: process.env.REDIS_USERNAME,
+    password: process.env.REDIS_PASSWORD,
+    socket: {
+        host: process.env.REDIS_HOST,
+        port: 17663
+    }
 });
-
 
 client.on('connect', () => {
   console.log('Connected to Redis server');
 });
 
 client.on('error', (err) => {
-  console.error('Redis error:', err);
+  console.error('Redis error : ', err);
 });
+
+function timeToMinutes(time) {
+  const parts = time.split(':').reverse();
+  let minutes = 0;
+
+  if (parts[0]) { 
+      minutes += parseInt(parts[1]) || 0; 
+  }
+  if (parts[2]) {
+      minutes += parseInt(parts[2]) * 60; 
+  }
+  return minutes;
+}
 
 async function connectDB() { await client.connect(); }
 
@@ -39,16 +54,23 @@ async function loadDB(id) {
 }
 
 async function loadDIR() {
-  fs.readdir(MEDIAPATH, (err, files) => {
+  fs.readdir(process.env.MEDIAPATH, (err, files) => {
     if (err) {
       throw new Error("Media Directory Failure");
     }
-    mp4Files = files.filter(file => { const extName = path.extname(file); return extName === '.mp4' });
+
+    // Only Accept MP4 Files As Video.js Works Best With MP4 H.264 Videos
+    mp4Files = files.filter(file => { const extName = path.extname(file); const baseName = path.basename(file, extName); return extName === '.mp4' && /^[0-9]{4}$/.test(baseName); });
+  
+    // Add FFMpeg H.264 Check If Needed,  Else Convert Them Manually
   })
 };
 
+// Server Caching
 async function getAllValues() {
-  for (let i = 1; i <= ENDVALUE; i++) {
+  END = await client.get('ENDVALUE');
+  END = parseInt(END, 10);
+  for (let i = 1; i <= END; i++) {
     const key = i.toString().padStart(4, '0');
     try {
       const value = await client.json.get(key, '.');
@@ -60,9 +82,9 @@ async function getAllValues() {
 };
 
 app.use(express.json());
-app.use("/assets/", express.static(path.join(__dirname, 'assets')));
-app.use("/icons/", express.static(path.join(__dirname, 'icons')));
-app.use("/thumbnails/", express.static(path.join(__dirname, '.thumbnails')));
+app.use("/assets/", express.static(path.join(__dirname, 'Assets')));
+app.use("/icons/", express.static(path.join(__dirname, 'Assets/Icons')));
+app.use("/thumbnails/", express.static(path.join(__dirname, 'Medias/Thumbnails')));
 
 // Complete
 app.get('/', (req, res) => {
@@ -82,8 +104,9 @@ app.get('/all', async function (req, res) {
 // Complete
 app.get('/video', async (req, res) => {
   const { id } = req.query;
-  if (!id) { return res.status(404).json({ error: "Invalid ID" }); }
-  const videoPath = path.join(MEDIAPATH, `${id}.mp4`);
+  const idPattern = /^\d{4}$/;
+  if (!id || !idPattern.test(id)) { return res.status(404).json({ error: "Invalid ID" }); }
+  const videoPath = path.join(process.env.MEDIAPATH, `${id}.mp4`);
   if (!fs.existsSync(videoPath)) { return res.status(404).json({ error: 'File not found' }) };
   const stat = fs.statSync(videoPath);
   const fileSize = stat.size;
@@ -124,7 +147,8 @@ app.get('/video', async (req, res) => {
 app.get('/info', async (req, res) => {
   try {
     const { id } = req.query;
-    if (!id) { throw new Error(); }
+    const idPattern = /^\d{4}$/;
+    if (!id || !idPattern.test(id)) { throw new Error(); }
     const db = await loadDB(id);
     if (db) {
       const formattedData = {
@@ -144,16 +168,18 @@ app.post('/info', async (req, res) => {
   try {
     const { title, time, artist, category } = req.body;
     const { id } = req.query;
-    if (!id) throw new Error();
+    const idPattern = /^\d{4}$/;
+    if (!id || !idPattern.test(id)) throw new Error();
     const data = {
       Title: title,
-      Time: time,
+      Time: timeToMinutes(time),
       Artist: artist,
       Category: category
     };
     await client.json.set(id, '.', data, { NX: false });
-    res.json({ message: 'Data set successfully', data });
-    getAllValues();
+    if (id > END) console.log("Increment END");
+    const getall = await getAllValues();
+    res.status(200).json({ message: 'Data set successfully', data });
   } catch (err) {
     res.status(500).json({ error: 'Error Occured While Posting Info' });
   }
@@ -165,7 +191,7 @@ app.all('/*', (req, res) => {
 
 async function runStartupTasks() {
   try {
-    new Promise((resolve) => { /*connectDB();*/ resolve(); }).then(() => { return new Promise((resolve) => { loadDIR(); resolve(); }); }).then(() => { return new Promise((resolve) => { getAllValues(); resolve(); }); }) .then(() => { console.log('All startup tasks completed'); })
+    new Promise((resolve) => { connectDB(); resolve(); }).then(() => { return new Promise((resolve) => { loadDIR(); resolve(); }); }).then(() => { return new Promise((resolve) => { getAllValues(); resolve(); }); }) .then(() => { console.log('All startup tasks completed'); })
   }
   catch (err) {
     console.error('Error during startup tasks:', err);
@@ -174,5 +200,5 @@ async function runStartupTasks() {
 }
 runStartupTasks().then(() => { 
   app.listen(port, () => { 
-    console.log(`Server is running on http://localhost:${port}`); 
+    console.log(`Server is running on ${port}`); 
 }); });
