@@ -57,8 +57,8 @@ npm run start
 
 == Special Note
 
-. Edge Cases Have Not Been Addressed Properly, Which Might Cause The App/Server To Crash Unexpectedly
-. Codes Are Not Optimised Well, So Higher Resource Consumption And Unexpected Crash Is Expected
+. Edge Cases Have Not Been Addressed Properly, Which Might Cause The App/Server To Crash Unexpectedly.
+. Codes Are Not Optimised Well, So Higher Resource Consumption And Unexpected Crash Is Expected.
 . The WebApp Is Not Responsive, Works Best On 720p or 1080p Landscape Screen.
 
 '''
