@@ -11,9 +11,10 @@ Completed
 
 == Features
 
-. Simple Web Video Player Made Using Video.js
-. Directly Scan Videos From Folder And Serves Them
-. Redis Is Used For Faster Data Access And Efficiently Cached By The Server
+. Simple Web Video Player Made Using Vanilla JavaScript + Video.js.
+. Directly Scan Videos From Folder And Serves Them.
+. Redis Is Used For Faster Data Access And Efficiently Cached By The Server.
+. Video Player Supports Keyboard Hotkeys And Picture-in-picture Mode.
 
 '''
 
@@ -43,6 +44,7 @@ Completed
 . Setup Database
 .. Create A Database At Redis Cloud And Check The Connection String In It.
 .. Paste REDIS_PASSWORD And REDIS_HOST In .env File ( Username Is Expected To Be #default#, Unless Edited ).
+.. In Database, Create An Entry Of Type String #ENDVALUE# And Set It's Value To 0.
 . Setup Server
 .. Install NPM Packages:
 [source, bash]
@@ -57,6 +59,7 @@ npm run start
 
 . Edge Cases Have Not Been Addressed Properly, Which Might Cause The App/Server To Crash Unexpectedly
 . Codes Are Not Optimised Well, So Higher Resource Consumption And Unexpected Crash Is Expected
+. The WebApp Is Not Responsive, Works Best On 720p or 1080p Landscape Screen.
 
 '''
 
@@ -90,7 +93,7 @@ Metadata Is Not Correct Or Not In Start Of The Video, Simply Re-encoding The Vid
 [%collapsible]
 ====
 ....
-While Video Is Loaded Press #`# Hotkey On Keyboard. If Time Shows #-:-# Then Close And Play The Video And Open Again.
+While Video Is Loaded Press '`' Hotkey On Keyboard. If Time Shows -:- Then Close And Play The Video And Open Again.
 ....
 ====
 
